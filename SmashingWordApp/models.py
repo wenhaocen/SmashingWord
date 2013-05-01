@@ -168,6 +168,7 @@ class Item(models.Model):
 	#Insert objects when database is initialized. 
 	def insertObjects(self):
 		try:
+			Item.objects.all().delete()
 			temp = Item(name="Extra Time", price=5)
 			temp.save()
 			temp = Item(name="View Obstructor", price=8)
