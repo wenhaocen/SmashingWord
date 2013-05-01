@@ -58,7 +58,9 @@ def index(request):
 			raise Http404
 	elif request.method=="GET":
 		content_type="application/json"
-		if request.path.find("/users/Top10Scores")==0:
+		if request.path.find("/diulama/items")==0:
+			g_item.insertObjects()
+		elif request.path.find("/users/Top10Scores")==0:
 			return TopScoresController(request)
 		elif request.path.find("/items/view")==0:
 			return ItemGetConroller(request)

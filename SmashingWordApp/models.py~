@@ -31,7 +31,6 @@ class User(models.Model):
 			temp = self.userExist(inUserName)
 			if (temp[0]==False):
 				self.add(inUserName, Balance = inBalance)
-				print "add user"
 			else:
 				dbResult = User.objects.get(userName = inUserName)
 				dbResult.balance = inBalance
@@ -165,6 +164,26 @@ class User(models.Model):
 class Item(models.Model):
 	name = models.TextField(max_length=128, blank=False)
 	price = models.IntegerField(blank=False)
+
+	#Insert objects when database is initialized. 
+	def insertObjects(self):
+		try:
+			temp = Item(name="Extra Time", price=5)
+			temp.save()
+			temp = Item(name="View Obstructor", price=8)
+			temp.save()
+			temp = Item(name="Character Increase", price=15)
+			temp.save()
+			temp = Item(name="Time Freezer", price=7)
+			temp.save()
+			temp = Item(name="Time Slower", price=7)
+			temp.save()
+			return (SUCCESS,{})
+		except Exception as e:
+			print (e)
+			return (FAILURE,{})
+		
+
 	
 	def getItemInfo(self,ItemName):
 		try:

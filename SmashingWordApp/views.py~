@@ -58,7 +58,9 @@ def index(request):
 			raise Http404
 	elif request.method=="GET":
 		content_type="application/json"
-		if request.path.find("/users/Top10Scores")==0:
+		if request.path.find("/diulama/items")==0:
+			g_item.insertObjects()
+		elif request.path.find("/users/Top10Scores")==0:
 			return TopScoresController(request)
 		elif request.path.find("/items/view")==0:
 			return ItemGetConroller(request)
@@ -104,8 +106,8 @@ def ItemPostController(request):
 		if (dbUser=={} or dbItem=={}):
 			return HttpResponse(json.dumps({'Code': FAILURE, 'data':{}}),content_type="application/json" )
 		else:
-			itemPrice = dbItem.price
-			userBalance = dbUser.balance
+			itemPrice = dbItem['price']
+			userBalance = dbUser['balance']
 			if (userBalance - itemPrice>=0):
 				finalBalance = userBalance - itemPrice
 				g_user.updateBalance(user, finalBalance)
