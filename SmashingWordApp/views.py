@@ -59,7 +59,7 @@ def index(request):
 	elif request.method=="GET":
 		content_type="application/json"
 		if request.path.find("/diulama/items")==0:
-			g_item.insertObjects()
+			result= g_item.insertObjects()
 			return HttpResponse(json.dumps({'Code': result[0], 'data':result[1]}),content_type="application/json" )
 		elif request.path.find("/users/Top10Scores")==0:
 			return TopScoresController(request)
