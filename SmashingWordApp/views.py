@@ -177,6 +177,8 @@ def UserController(request):
 
 	elif request.path =="/users/SaveScores/multiple":
 		print (11111111)
+		print (type(inUserName))
+		print (type(inScore))
 		result = g_user.saveScoresMultiple(inUserName, inScore)
 		print (22222222)
 
