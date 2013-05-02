@@ -56,6 +56,8 @@ def index(request):
 			return TESTController(request)
 		elif request.path.find("/items/post/") ==0:
 			return ItemPostController(request)
+		elif request.path.find("/users/Top10Scores")==0:
+			return TopScoresController(request)
 		else:
 			raise Http404
 	elif request.method=="GET":
@@ -66,8 +68,6 @@ def index(request):
 			result3 = g_singleScore.insertObjects()
 			if (result1[0]==1 and result2[0]==1 and result3[0]==1):
 				return HttpResponse(json.dumps({'Code': 1, 'data':{}}),content_type="application/json" )
-		elif request.path.find("/users/Top10Scores")==0:
-			return TopScoresController(request)
 		elif request.path.find("/items/view")==0:
 			return ItemGetConroller(request)
 		elif request.path.find("/users/getUserInfo")==0:
@@ -150,7 +150,6 @@ def TopScoresController(request):
 		result = g_user.Top10Multiple()
 	else:
 		raise Http404
-	print (result)
 	return HttpResponse(json.dumps({'Code': result[0], 'data':result[1]}),content_type="application/json" )
 
 @csrf_exempt
