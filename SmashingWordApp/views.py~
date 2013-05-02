@@ -142,7 +142,7 @@ def TESTController(request):
 @csrf_exempt
 def TopScoresController(request): 
 	if request.path =="/users/Top10Scores/single":
-		result = g_user.Top10Single()
+		result = g_singleScore.getTopTenSingle()
 	elif request.path =="/users/Top10Scores/multiple":
 		result = g_user.Top10Multiple()
 	else:

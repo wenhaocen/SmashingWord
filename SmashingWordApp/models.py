@@ -280,7 +280,7 @@ class SingleTopTen(models.Model):
 	def getTopTenSingle(self):
 		listofTops = SingleTopTen.objects.all()
 		temp  = [elem.score for elem in listofTops]
-		return sorted(temp,key= sortHelper)
+		return (SUCCESS, sorted(temp,key= sortHelper))
 
 
 	
