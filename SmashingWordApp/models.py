@@ -306,7 +306,10 @@ class SingleTopTen(models.Model):
 	def getTopTenSingle(self):
 		listofTops = SingleTopTen.objects.all()
 		temp  = [elem.score for elem in listofTops]
-		return (SUCCESS, sorted(temp,key= sortHelper))
+		temp2 = sorted(temp,key= sortHelper)
+		print ("diu la ma !!!")
+		print (temp2)
+		return (SUCCESS,temp2)
 	def insertObjects(self):
 		try:
 			temp  = SingleTopTen(score=100)
