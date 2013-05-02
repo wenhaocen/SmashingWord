@@ -20,7 +20,33 @@ class User(models.Model):
 	
 	def __unicode__(self):
 		return str((self.userName, self.balance, self.mpScore, self.spScore))
-
+	#Used to generate sample data for testing purpose
+	def insertObjects(self):
+		try:
+			temp = User(userName = "Edward Peter Chen", balance = 0, mpScore = 100, sp=0)
+			temp.save()
+			temp = User(userName = "Peter Chen", balance = 0, mpScore = 20, sp=0)
+			temp.save()
+			temp = User(userName = "Bing Chong Lim", balance = 0, mpScore = 4, sp=0)
+			temp.save()
+			temp = User(userName = "Charls Gao", balance = 0, mpScore = 3, sp=0)
+			temp.save()
+			temp = User(userName = "Test User I", balance = 0, mpScore = 2, sp=0)
+			temp.save()
+			temp = User(userName = "Test User II", balance = 0, mpScore = 1, sp=0)
+			temp.save()
+			temp = User(userName = "Test User III", balance = 0, mpScore = 0, sp=0)
+			temp.save()
+			temp = User(userName = "Test User IV", balance = 0, mpScore = 0, sp=0)
+			temp.save()
+			temp = User(userName = "Test User V", balance = 0, mpScore = 0, sp=0)
+			temp.save()
+			temp = User(userName = "Test User VI", balance = 0, mpScore = 0, sp=0)
+			temp.save()
+			return (SUCCESS,{})
+		except Exception as e:
+			print (e)
+			return (FAILURE, {})
 	def TESTAPI_resetFixture(self):
 		User.objects.all().delete()
 		return SUCCESS
@@ -280,7 +306,33 @@ class SingleTopTen(models.Model):
 	def getTopTenSingle(self):
 		listofTops = SingleTopTen.objects.all()
 		temp  = [elem.score for elem in listofTops]
-		return sorted(temp,key= sortHelper)
+		return (SUCCESS, sorted(temp,key= sortHelper))
+	def insertObjects(self):
+		try:
+			temp  = SingleTopTen(100)
+			temp.save()
+			temp  = SingleTopTen(64)
+			temp.save()
+			temp  = SingleTopTen(42)
+			temp.save()
+			temp  = SingleTopTen(41)
+			temp.save()
+			temp  = SingleTopTen(23)
+			temp.save()
+			temp  = SingleTopTen(0)
+			temp.save()
+			temp  = SingleTopTen(0)
+			temp.save()
+			temp  = SingleTopTen(0)
+			temp.save()
+			temp  = SingleTopTen(10)
+			temp.save()
+			temp  = SingleTopTen(8)
+			temp.save()
+			return (SUCCESS, {})
+		except Exception as e:
+			print (e)
+			return (FAILURE, {})
 
 
 	
