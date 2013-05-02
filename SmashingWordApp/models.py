@@ -307,8 +307,6 @@ class SingleTopTen(models.Model):
 		listofTops = SingleTopTen.objects.all()
 		temp  = [elem.score for elem in listofTops]
 		temp2 = sorted(temp,key= sortHelper)
-		print ("diu la ma !!!")
-		print (temp2)
 		return (SUCCESS,temp2)
 	def insertObjects(self):
 		try:

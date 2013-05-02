@@ -150,6 +150,7 @@ def TopScoresController(request):
 		result = g_user.Top10Multiple()
 	else:
 		raise Http404
+	print (result)
 	return HttpResponse(json.dumps({'Code': result[0], 'data':result[1]}),content_type="application/json" )
 
 @csrf_exempt
