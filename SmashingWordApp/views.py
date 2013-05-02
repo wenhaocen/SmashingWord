@@ -176,7 +176,9 @@ def UserController(request):
 		result = g_singleScore.saveScoressSingle(inScore)
 
 	elif request.path =="/users/SaveScores/multiple":
+		print (11111111)
 		result = g_user.saveScoresMultiple(inUserName, inScore)
+		print (22222222)
 
 	elif request.path == "/users/updateBalance":
 		result = g_user.updateBalance(inUserName, inBalance)

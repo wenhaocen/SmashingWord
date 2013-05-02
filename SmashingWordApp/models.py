@@ -72,6 +72,7 @@ class User(models.Model):
 	
 	def add(self,inUserName, Balance=0, MpScore=0, SpScore=0):
 		code=1
+		print ("diu la ma !!!!")
 		print SpScore
 		if self.userExist(inUserName)[0]:
 			code=ERR_USER_EXISTS
@@ -104,7 +105,6 @@ class User(models.Model):
 			return (FAILURE, {})
 	def Top10Multiple(self):
 		try:
-			print "query multiple top 10"
 			dbResult = User.objects.order_by("-mpScore")[0:10]
 			return (SUCCESS, self.parseHandler(dbResult,'easy', False))
 		except Exception as e:
@@ -132,10 +132,14 @@ class User(models.Model):
 
 	def saveScoresMultiple(self,inUserName, inScore):
 		try:
+			print ("333333")
 			temp = self.userExist(inUserName)
+			print ("444444444")
 			if (temp[0]==False):
+				print ("5555555")
 				self.add(inUserName, MpScore=inScore)
 			else:
+				print(666666)
 				dbResult = User.objects.get(userName = inUserName)
 				if inScore > dbResult.mpScore:
 					dbResult.mpScore = inScore
