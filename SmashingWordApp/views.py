@@ -167,6 +167,7 @@ def UserController(request):
 	inData = json.loads(request.body)
 	inUserName =None
 	inScore =None
+	print (inData)
 	if 'user' in inData:
 		inUserName = inData["user"]
 	if 'score' in inData:
