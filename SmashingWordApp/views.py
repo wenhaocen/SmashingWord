@@ -61,10 +61,11 @@ def index(request):
 	elif request.method=="GET":
 		content_type="application/json"
 		if request.path.find("/diulama/inittestdb")==0:
-			result= g_item.insertObjects()
-			result = g_user.insertObjects()
-			result = g_singleScore.insertObjects()
-			return HttpResponse(json.dumps({'Code': result[0], 'data':result[1]}),content_type="application/json" )
+			result1= g_item.insertObjects()
+			result2 = g_user.insertObjects()
+			result3 = g_singleScore.insertObjects()
+			if (result1[0]==1 and result2[0]==1 and result3[0]==1):
+				return HttpResponse(json.dumps({'Code': 1, 'data':{}}),content_type="application/json" )
 		elif request.path.find("/users/Top10Scores")==0:
 			return TopScoresController(request)
 		elif request.path.find("/items/view")==0:
