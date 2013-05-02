@@ -23,6 +23,7 @@ class User(models.Model):
 	#Used to generate sample data for testing purpose
 	def insertObjects(self):
 		try:
+			User.objects.all().delete()
 			temp = User(userName = "Edward Peter Chen", balance = 0, mpScore = 100, spScore=0)
 			temp.save()
 			temp = User(userName = "Peter Chen", balance = 0, mpScore = 20, spScore=0)
@@ -309,6 +310,7 @@ class SingleTopTen(models.Model):
 		temp2 = sorted(temp,key= sortHelper)
 		return (SUCCESS,temp2)
 	def insertObjects(self):
+		SingleTopTen.objects.all().delete()
 		try:
 			temp  = SingleTopTen(score=100)
 			temp.save()
