@@ -130,7 +130,6 @@ class User(models.Model):
 			code=FAILURE
 		return (code, {})
 	def saveScoresMultiple(self,inUserName, inScore):
-		print ("fuck yeah!")
 		try:
 			temp = self.userExist(inUserName)
 			if (temp[0]==False):
