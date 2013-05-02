@@ -165,6 +165,8 @@ def InfoController(request):
 @csrf_exempt
 def UserController(request):
 	inData = json.loads(request.body)
+	inUserName =None
+	inScore =None
 	if 'user' in inData:
 		inUserName = inData["user"]
 	if 'score' in inData:
@@ -179,6 +181,8 @@ def UserController(request):
 		print (11111111)
 		print (type(inUserName))
 		print (type(inScore))
+		print (inUserName)
+		print (inScore)
 		result = g_user.saveScoresMultiple(inUserName, inScore)
 		print (22222222)
 
