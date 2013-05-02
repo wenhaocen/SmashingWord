@@ -4,6 +4,7 @@ from django.template import Context, loader
 from SmashingWordApp.models import User
 from SmashingWordApp.models import Item
 from SmashingWordApp.models import OwnItem
+from SmashingWordApp.models import SingleTopTen
 # import the logging library
 from django.views.decorators.csrf import csrf_protect
 import logging
@@ -29,6 +30,7 @@ from email.mime.text import MIMEText
 g_user = models.User()
 g_item = models.Item()
 g_OwnItem = models.OwnItem()
+g_singleScore = models.SingleTopTen()
 
 
 SUCCESS               =   1  # : a success
@@ -100,10 +102,8 @@ def ItemPostController(request):
 	if 'price' in inData:
 		price = inData['price']
 	if request.path == "/items/post/buy":
-		print "1234"
 		dbUser = g_user.getUserInfo(user)[1]
 		dbItem = g_item.getItemInfo(ItemName)[1]
-		print "12341212131"
 		if (dbUser=={} or dbItem=={}):
 			return HttpResponse(json.dumps({'Code': FAILURE, 'data':{}}),content_type="application/json" )
 		else:
@@ -142,7 +142,7 @@ def TESTController(request):
 @csrf_exempt
 def TopScoresController(request): 
 	if request.path =="/users/Top10Scores/single":
-		result = g_user.Top10Single()
+		result = g_singleScore.getTopTenSingle()
 	elif request.path =="/users/Top10Scores/multiple":
 		result = g_user.Top10Multiple()
 	else:
@@ -170,7 +170,7 @@ def UserController(request):
 		inBalance = inData['balance']
 
 	if request.path =="/users/SaveScores/single":
-		result = g_user.saveScoressSingle(inUserName, inScore)
+		result = g_singleScore.saveScoressSingle(inScore)
 
 	elif request.path =="/users/SaveScores/multiple":
 		result = g_user.saveScoresMultiple(inUserName, inScore)

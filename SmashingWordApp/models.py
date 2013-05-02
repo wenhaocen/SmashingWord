@@ -250,6 +250,39 @@ class OwnItem(models.Model):
 		except Exception as e:
 			print e
 			return (FAILURE,{})
+
+def sortHelper(inputNum):
+	return -inputNum
+
+
+class SingleTopTen(models.Model):
+	score = models.IntegerField()
+	def saveScoressSingle(self,score):
+		try:
+			minScore = None
+			listofTops  = SingleTopTen.objects.all()
+			if len(listofTops)<10:
+				temp = SingleTopTen(score)
+				temp.save()
+			else:
+				for elem in listofTops:
+					if minScore == None:
+						minScore = elem
+					elif elem.score< minScore.score:
+						minScore = elem
+				if score > minScore.score:
+					minScore.score = score
+					minScore.save()
+			return (SUCCESS,{})
+		except Exception as e:
+			print (e)
+			return (FAILURE, {})
+	def getTopTenSingle(self):
+		listofTops = SingleTopTen.objects.all()
+		temp  = [elem.score for elem in listofTops]
+		return sorted(temp,key= sortHelper)
+
+
 	
 
 

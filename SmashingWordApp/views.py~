@@ -4,6 +4,7 @@ from django.template import Context, loader
 from SmashingWordApp.models import User
 from SmashingWordApp.models import Item
 from SmashingWordApp.models import OwnItem
+from SmashingWordApp.models import SingleTopTen
 # import the logging library
 from django.views.decorators.csrf import csrf_protect
 import logging
@@ -29,6 +30,7 @@ from email.mime.text import MIMEText
 g_user = models.User()
 g_item = models.Item()
 g_OwnItem = models.OwnItem()
+g_singleScore = models.SingleTopTen()
 
 
 SUCCESS               =   1  # : a success
@@ -59,7 +61,7 @@ def index(request):
 	elif request.method=="GET":
 		content_type="application/json"
 		if request.path.find("/diulama/items")==0:
-			g_item.insertObjects()
+			result= g_item.insertObjects()
 			return HttpResponse(json.dumps({'Code': result[0], 'data':result[1]}),content_type="application/json" )
 		elif request.path.find("/users/Top10Scores")==0:
 			return TopScoresController(request)
@@ -100,10 +102,8 @@ def ItemPostController(request):
 	if 'price' in inData:
 		price = inData['price']
 	if request.path == "/items/post/buy":
-		print "1234"
 		dbUser = g_user.getUserInfo(user)[1]
 		dbItem = g_item.getItemInfo(ItemName)[1]
-		print "12341212131"
 		if (dbUser=={} or dbItem=={}):
 			return HttpResponse(json.dumps({'Code': FAILURE, 'data':{}}),content_type="application/json" )
 		else:
@@ -170,7 +170,7 @@ def UserController(request):
 		inBalance = inData['balance']
 
 	if request.path =="/users/SaveScores/single":
-		result = g_user.saveScoressSingle(inUserName, inScore)
+		result = g_singleScore.saveScoressSingle(inScore)
 
 	elif request.path =="/users/SaveScores/multiple":
 		result = g_user.saveScoresMultiple(inUserName, inScore)
