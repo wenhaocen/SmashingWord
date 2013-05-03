@@ -205,6 +205,8 @@ def UserController(request):
 		inUserName = inData["user"]
 	if 'score' in inData:
 		inScore = inData['score']
+		print("diu la ma ")
+		print (inScore)
 	if 'balance' in inData:
 		inBalance = inData['balance']
 	if request.path =="/users/SaveScores/single":
