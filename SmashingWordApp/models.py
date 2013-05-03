@@ -364,10 +364,14 @@ class SingleTopTen(models.Model):
 		SingleTopTen.objects.all().delete()
 		return (SUCCESS,{})
 	def insertObjects(self):
+		print (3333)
 		self.reset()
+		print (7777)
 		try:
 			temp  = SingleTopTen(score=100)
+			print(1111)
 			temp.save()
+			print(2222)
 			temp  = SingleTopTen(score =64)
 			temp.save()
 			temp  = SingleTopTen(score =42)
