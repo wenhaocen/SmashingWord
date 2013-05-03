@@ -261,8 +261,8 @@ class Item(models.Model):
 
 
 class OwnItem(models.Model):
-	user = models.TextField(max_length=128, blank=False)
-	Itemname = models.TextField(max_length=128, blank=False)
+	userA = models.TextField(max_length=128, blank=False)
+	Itemname = models.TextField(max_length=128)
 	amount = models.IntegerField()
 	
 	def reset(self):
@@ -293,12 +293,12 @@ class OwnItem(models.Model):
 			else:
 				exist = 0
 				try:
-					User.objects.get(userName = user)
+					User.objects.get(userA = user)
 					exist =1
 				except Exception as e:
 					exist = 0
 				if exist==1: 
-					tobeAdd = OwnItem(userName = user,name = ItemName, amount=1 )
+					tobeAdd = OwnItem(userA = user,Itemname = ItemName, amount=1 )
 					tobeAdd.save()
 					return (SUCCESS,{})
 				else:
@@ -309,7 +309,7 @@ class OwnItem(models.Model):
 			return (FAILURE,{})
 	def testExist(self, user, ItemName):
 		try:
-			dbResult = OwnItem.objects.get(userName = user, name = ItemName)
+			dbResult = OwnItem.objects.get(userA = user, Itemname = ItemName)
 			return (True, dbResult)
 		except Exception as e:
 			print (e)
@@ -317,11 +317,10 @@ class OwnItem(models.Model):
 
 	def deletePair(self, user,ItemName):
 		try:
-			temp = OwnItem.objects.get(userName = user, name = ItemName)
-			if type(temp) == django.db.models.query.QuerySet:
-				for elem in temp:
-					elem.delete()
-					break
+			temp = OwnItem.objects.get(userA = user, Itemname = ItemName)
+			if temp.amount -1 >0:
+				temp.amount -=1
+				temp.save()
 			else:
 				temp.delete()
 			return (SUCCESS,{})

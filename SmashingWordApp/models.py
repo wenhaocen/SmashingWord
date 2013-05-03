@@ -262,7 +262,7 @@ class Item(models.Model):
 
 class OwnItem(models.Model):
 	userA = models.TextField(max_length=128, blank=False)
-	Itemname = models.TextField(max_length=128, blank=False)
+	Itemname = models.TextField(max_length=128)
 	amount = models.IntegerField()
 	
 	def reset(self):
@@ -318,10 +318,9 @@ class OwnItem(models.Model):
 	def deletePair(self, user,ItemName):
 		try:
 			temp = OwnItem.objects.get(userA = user, Itemname = ItemName)
-			if type(temp) == django.db.models.query.QuerySet:
-				for elem in temp:
-					elem.delete()
-					break
+			if temp.amount -1 >0:
+				temp.amount -=1
+				temp.save()
 			else:
 				temp.delete()
 			return (SUCCESS,{})
