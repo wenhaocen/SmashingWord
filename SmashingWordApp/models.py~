@@ -263,7 +263,7 @@ class Item(models.Model):
 class OwnItem(models.Model):
 	userName = models.TextField(max_length=128, blank=False)
 	name = models.TextField(max_length=128, blank=False)
-	amount = models.models.IntegerField()
+	amount = models.IntegerField()
 	
 	def reset(self):
 		OwnItem.objects.all().delete()

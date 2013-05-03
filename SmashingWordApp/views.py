@@ -68,14 +68,22 @@ def index(request):
 			result3 = g_singleScore.reset()
 			result4 = g_OwnItem.reset()
 			if (result1[0]==1 and result2[0]==1 and result3[0]==1 and result4[0]==1):
-				return HttpResponse(json.dumps({'Code': 1, 'data':{}}),content_type="application/json" )	
+				return HttpResponse(json.dumps({'Code': 1, 'data':{}}),content_type="application/json" )
+			else:	
+				return HttpResponse(json.dumps({'Code': -5, 'data':{}}),content_type="application/json" )
 		elif request.path.find("/diulama/inittestdb")==0:
 			result1= g_item.insertObjects()
 			result2 = g_user.insertObjects()
 			result3 = g_singleScore.insertObjects()
 			result4 = g_OwnItem.insertObjects()
+			print (result1)
+			print (result2)
+			print (result3)
+			print (result4)
 			if (result1[0]==1 and result2[0]==1 and result3[0]==1 and result4[0]==1):
 				return HttpResponse(json.dumps({'Code': 1, 'data':{}}),content_type="application/json" )
+			else:	
+				return HttpResponse(json.dumps({'Code': -5, 'data':{}}),content_type="application/json" )
 		elif request.path.find("/items/view")==0:
 			return ItemGetConroller(request)
 		elif request.path.find("/users/getUserInfo")==0:
