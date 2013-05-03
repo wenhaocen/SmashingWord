@@ -253,11 +253,8 @@ class TestAmbition(testLib.RestTestCase):
     def testBuyAmountCorrect(self):
 	self.makeRequest("/items/post/update", method="POST", data={'ItemName':'testPowerUp', 'price':12})
 	self.makeRequest("/users/updateBalance", method="POST", data={'user':'1', 'balance':40})
-	print ("test 1")
 	respData = self.makeRequest("/items/post/buy", method="POST", data={'ItemName':'testPowerUp', 'user':'1'})
-	print ("test 2")
 	respData = self.makeRequest("/items/post/buy", method="POST", data={'ItemName':'testPowerUp', 'user':'1'})
-	print ("test 3")
 	respData = self.makeRequest("/items/post/get", method="POST", data={'user':'1'})
 	self.assertDictEqual(respData, {'Code':1,'data':[{'name':'testPowerUp', 'amount':2}]})
 

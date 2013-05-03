@@ -64,10 +64,6 @@ def index(request):
 			result2 = g_user.insertObjects()
 			result3 = g_singleScore.insertObjects()
 			result4 = g_OwnItem.insertObjects()
-			print (result1)
-			print (result2)
-			print (result3)
-			print (result4)
 			if (result1[0]==1 and result2[0]==1 and result3[0]==1 and result4[0]==1):
 				return HttpResponse(json.dumps({'Code': 1, 'data':{}}),content_type="application/json" )
 			else:	
@@ -98,10 +94,6 @@ def index(request):
 			result2 = g_user.insertObjects()
 			result3 = g_singleScore.insertObjects()
 			result4 = g_OwnItem.insertObjects()
-			print (result1)
-			print (result2)
-			print (result3)
-			print (result4)
 			if (result1[0]==1 and result2[0]==1 and result3[0]==1 and result4[0]==1):
 				return HttpResponse(json.dumps({'Code': 1, 'data':{}}),content_type="application/json" )
 			else:	
@@ -143,28 +135,17 @@ def ItemPostController(request):
 	if 'price' in inData:
 		price = inData['price']
 	if request.path == "/items/post/buy":
-		print (1111)
 		dbUser = g_user.getUserInfo(user)[1]
-		print (2222)
 		dbItem = g_item.getItemInfo(ItemName)[1]
-		print (3333)
 		if (dbUser=={} or dbItem=={}):
-			print (4444)
 			return HttpResponse(json.dumps({'Code': FAILURE, 'data':{}}),content_type="application/json" )
 		else:
-			print (5555)
-			print (dbItem)
-			print(dbUser)
 			itemPrice = dbItem['price']
 			userBalance = dbUser['balance']
 			if (userBalance - itemPrice>=0):
-				print (6666)
 				finalBalance = userBalance - itemPrice
-				print (7777)
 				g_user.updateBalance(user, finalBalance)
-				print (8888)
 				result = g_OwnItem.addPair(user, ItemName)
-				print (9999)
 			else:
 				return HttpResponse(json.dumps({'Code': FAILURE, 'data':{}}),content_type="application/json" )
 	elif request.path  == "/items/post/use":
@@ -210,7 +191,6 @@ def TopScoresController(request):
 def InfoController(request):
 	if 'user' in inData:
 		inUserName = inData["user"]
-		print "3333"
 		result = g_user.getUserInfo(inUserName)
 	else:
 		result = g_user.getUserInfo()
@@ -221,7 +201,6 @@ def UserController(request):
 	inData = json.loads(request.body)
 	inUserName =None
 	inScore =None
-	print (inData)
 	if 'user' in inData:
 		inUserName = inData["user"]
 	if 'score' in inData:
