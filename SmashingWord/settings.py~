@@ -7,21 +7,21 @@ ADMINS = (
 )
 
 MANAGERS = ADMINS
-#import dj_database_url
+import dj_database_url
 
-DATABASES = {
-    'default': dj_database_url.config()
-}
 #DATABASES = {
-#	'default' :{
-#	'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#	'NAME': 'postgres',
-#	'USER': 'postgres',
-#	'PASSWORD':'postgres',
-#	'HOST':'',
-#	'PORT':'',
-#	}
+ #   'default': dj_database_url.config()
 #}
+DATABASES = {
+	'default' :{
+	'ENGINE': 'django.db.backends.postgresql_psycopg2',
+	'NAME': 'postgres',
+	'USER': 'postgres',
+	'PASSWORD':'postgres',
+	'HOST':'',
+	'PORT':'',
+	}
+}
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
