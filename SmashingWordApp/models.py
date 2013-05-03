@@ -20,10 +20,15 @@ class User(models.Model):
 	
 	def __unicode__(self):
 		return str((self.userName, self.balance, self.mpScore, self.spScore))
+
+	def reset(self):
+		User.objects.all().delete()
+		return (SUCCESS,{})
+
 	#Used to generate sample data for testing purpose
 	def insertObjects(self):
 		try:
-			User.objects.all().delete()
+			self.reset()
 			temp = User(userName = "Edward Peter Chen", balance = 0, mpScore = 100, spScore=0)
 			temp.save()
 			temp = User(userName = "Peter Chen", balance = 0, mpScore = 20, spScore=0)
@@ -191,10 +196,14 @@ class Item(models.Model):
 	name = models.TextField(max_length=128, blank=False)
 	price = models.IntegerField(blank=False)
 
+	def reset(self):
+		Item.objects.all().delete()
+		return (SUCCESS,{})
+
 	#Insert objects when database is initialized. 
 	def insertObjects(self):
 		try:
-			Item.objects.all().delete()
+			self.reset()
 			temp = Item(name="Extra Time", price=5)
 			temp.save()
 			temp = Item(name="View Obstructor", price=8)
@@ -252,16 +261,59 @@ class Item(models.Model):
 
 
 class OwnItem(models.Model):
-	userName = models.ForeignKey(User)
-	name = models.ForeignKey(Item)
+	userName = models.TextField(max_length=128, blank=False)
+	name = models.TextField(max_length=128, blank=False)
+	amount = models.models.IntegerField()
+	
+	def reset(self):
+		OwnItem.objects.all().delete()
+		return (SUCCESS,{})
+	def insertObjects(self):
+		try:
+			self.reset()
+			self.addPair("WCen", "Extra Time")
+			self.addPair("WCen", "Extra Time")
+			self.addPair("WCen", "Extra Time")
+			self.addPair("WCen", "Extra Time")
+			self.addPair("WCen", "Extra Time")
+			self.addPair("WCen", "Extra Time")
+			self.addPair("WCen", "Extra Time")
+			return (SUCCESS, {})
+		except Exception as e:
+			return (FAILURE,{})
+
 
 	def addPair(self,user, ItemName):
 		try:
-			tobeAdd = addPair(user,ItemName)
-			tobeAdd.save()
+			temp = self.testExist(user,ItemName)
+			if (temp[0]):
+				dbresult = temp[1]
+				dbresult.amount +=1
+				dbresult.save()
+			else:
+				exist = 0
+				try:
+					User.objects.get(userName = user)
+					exist =1
+				except Exception as e:
+					exist = 0
+				if exist==1: 
+					tobeAdd = OwnItem(userName = user,name = ItemName, amount=1 )
+					tobeAdd.save()
+					return (SUCCESS,{})
+				else:
+					return (FAILURE, {})
+				
 		except Exception as e:
 			print e
 			return (FAILURE,{})
+	def testExist(self, user, ItemName):
+		try:
+			dbResult = OwnItem.objects.get(userName = user, name = ItemName)
+			return (True, dbResult)
+		except Exception as e:
+			print (e)
+			return (False, None)
 
 	def deletePair(self, user,ItemName):
 		try:
@@ -308,8 +360,11 @@ class SingleTopTen(models.Model):
 		temp  = [elem.score for elem in listofTops]
 		temp2 = sorted(temp,key= sortHelper)
 		return (SUCCESS,temp2)
-	def insertObjects(self):
+	def reset(self):
 		SingleTopTen.objects.all().delete()
+		return (SUCCESS,{})
+	def insertObjects(self):
+		self.reset()
 		try:
 			temp  = SingleTopTen(score=100)
 			temp.save()

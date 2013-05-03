@@ -62,11 +62,19 @@ def index(request):
 			raise Http404
 	elif request.method=="GET":
 		content_type="application/json"
-		if request.path.find("/diulama/inittestdb")==0:
+		if request.path.find("/diulama/emptydb")==0:
+			result1= g_item.reset()
+			result2 = g_user.reset()
+			result3 = g_singleScore.reset()
+			result4 = g_OwnItem.reset()
+			if (result1[0]==1 and result2[0]==1 and result3[0]==1 and result4[0]==1):
+				return HttpResponse(json.dumps({'Code': 1, 'data':{}}),content_type="application/json" )	
+		elif request.path.find("/diulama/inittestdb")==0:
 			result1= g_item.insertObjects()
 			result2 = g_user.insertObjects()
 			result3 = g_singleScore.insertObjects()
-			if (result1[0]==1 and result2[0]==1 and result3[0]==1):
+			result4 = g_OwnItem.insertObjects()
+			if (result1[0]==1 and result2[0]==1 and result3[0]==1 and result4[0]==1):
 				return HttpResponse(json.dumps({'Code': 1, 'data':{}}),content_type="application/json" )
 		elif request.path.find("/items/view")==0:
 			return ItemGetConroller(request)
@@ -174,19 +182,10 @@ def UserController(request):
 		inScore = inData['score']
 	if 'balance' in inData:
 		inBalance = inData['balance']
-
 	if request.path =="/users/SaveScores/single":
 		result = g_singleScore.saveScoressSingle(inScore)
-
 	elif request.path =="/users/SaveScores/multiple":
-		print (11111111)
-		print (type(inUserName))
-		print (type(inScore))
-		print (inUserName)
-		print (inScore)
 		result = g_user.saveScoresMultiple(inUserName, inScore)
-		print (22222222)
-
 	elif request.path == "/users/updateBalance":
 		result = g_user.updateBalance(inUserName, inBalance)
 
