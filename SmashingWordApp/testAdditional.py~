@@ -33,7 +33,7 @@ class TestAmbition(testLib.RestTestCase):
 		return temp
 	except Exception as e:	
 		print e
-
+   
     #check if we can update user balance correctly
     def testupdateBalance(self):
 	self.makeRequest("/users/updateBalance", method="POST", data={'user':'1', 'balance':1})
@@ -59,13 +59,8 @@ class TestAmbition(testLib.RestTestCase):
 	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'1', 'score':1})
 	self.makeRequest("/users/SaveScores/multiple", method="POST", data={'user':'1', 'score':2})
 	responseData = self.makeRequest("/users/getUserInfo", method="GET", data={'user':'1'})
-	self.assertDictEqual({'Code':testLib.RestTestCase.SUCCESS,'data':{'user':'1', 'spScore':1, 'mpScore':2,'balance':0}}, responseData )
-    #save a lower score and then save a higher score for the same user, see if we update the db correctly by take the higher score for that user
-    def testOverwriteSingleScore(self):
-	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'1', 'score':1})
-	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'1', 'score':2})
-	responseData = self.makeRequest("/users/getUserInfo", method="GET", data={'user':'1'})
-	self.assertDictEqual({'Code':testLib.RestTestCase.SUCCESS, 'data':{'user':'1', 'spScore':2, 'mpScore':0}}, self.extractDict(responseData) )
+	self.assertDictEqual({'Code':testLib.RestTestCase.SUCCESS,'data':{'user':'1', 'spScore':0, 'mpScore':2,'balance':0}}, responseData )
+  
 
     #Test the same thing as above except the following is multiple play score version.
     def testOverwriteMultipleScore(self):
@@ -81,7 +76,7 @@ class TestAmbition(testLib.RestTestCase):
 	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'1', 'score':1})
 	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'1', 'score':13})
 	responseData = self.makeRequest("/users/getUserInfo", method="GET", data={'user':'1'})
-	self.assertDictEqual({'Code':testLib.RestTestCase.SUCCESS, 'data': {'user':'1', 'spScore':13, 'mpScore':12}}, self.extractDict(responseData) )
+	self.assertDictEqual({'Code':testLib.RestTestCase.SUCCESS, 'data': {'user':'1', 'spScore':0, 'mpScore':12}}, self.extractDict(responseData) )
 	
     #Add 12 single user score, see if we can query the correct top 10 single user score;
     def testTop10Single(self):
@@ -97,8 +92,25 @@ class TestAmbition(testLib.RestTestCase):
 	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'10', 'score':10})
 	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'11', 'score':11})
 	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'12', 'score':12})
-	respData = self.makeRequest("/users/Top10Scores/single", method="GET",data={})
-	self.assertDictEqual({'Code':testLib.RestTestCase.SUCCESS,'data':[{'user':'12', 'score':12},{'user':'11', 'score':11},{'user':'10', 'score':10},{'user':'9', 'score':9},{'user':'8', 'score':8},{'user':'7', 'score':7},{'user':'6', 'score':6},{'user':'5', 'score':5},{'user':'4', 'score':4},{'user':'3', 'score':3}]},respData)
+	respData = self.makeRequest("/users/Top10Scores/single", method="POST",data={})
+	self.assertDictEqual({'Code':testLib.RestTestCase.SUCCESS,'data':[12,11,10,9,8,7,6,5,4,3]},respData)
+
+    #Due to my special implementation, we need to check whether backend return multiple copies of a score if we insert dulplicate again and again. 
+    def testTop10SingleOverlap(self):
+	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'1', 'score':1})
+	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'2', 'score':1})
+	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'3', 'score':3})
+	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'4', 'score':2})
+	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'5', 'score':4})
+	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'6', 'score':9})
+	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'7', 'score':9})
+	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'8', 'score':12})
+	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'9', 'score':10})
+	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'10', 'score':10})
+	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'11', 'score':11})
+	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'12', 'score':12})
+	respData = self.makeRequest("/users/Top10Scores/single", method="POST",data={})
+	self.assertDictEqual({'Code':testLib.RestTestCase.SUCCESS,'data':[12,12,11,10,10,9,9,4,3,2]},respData)
 
     # Just test the regular query for top 10 multiplayer scores.
     def testTop10Multiple(self):
@@ -114,7 +126,7 @@ class TestAmbition(testLib.RestTestCase):
 	self.makeRequest("/users/SaveScores/multiple", method="POST", data={'user':'10', 'score':10})
 	self.makeRequest("/users/SaveScores/multiple", method="POST", data={'user':'11', 'score':11})
 	self.makeRequest("/users/SaveScores/multiple", method="POST", data={'user':'12', 'score':12})
-	respData = self.makeRequest("/users/Top10Scores/multiple", method="GET",data={})
+	respData = self.makeRequest("/users/Top10Scores/multiple", method="POST",data={})
 	self.assertDictEqual({'Code':testLib.RestTestCase.SUCCESS,'data':[{'user':'12', 'score':12},{'user':'11', 'score':11},{'user':'10', 'score':10},{'user':'9', 'score':9},{'user':'8', 'score':8},{'user':'7', 'score':7},{'user':'6', 'score':6},{'user':'5', 'score':5},{'user':'4', 'score':4},{'user':'3', 'score':3}]},respData)
 
 
@@ -127,7 +139,7 @@ class TestAmbition(testLib.RestTestCase):
 	self.makeRequest("/users/SaveScores/multiple", method="POST", data={'user':'5', 'score':5})
 	self.makeRequest("/users/SaveScores/multiple", method="POST", data={'user':'6', 'score':6})
 	self.makeRequest("/users/SaveScores/multiple", method="POST", data={'user':'7', 'score':7})
-	respData = self.makeRequest("/users/Top10Scores/multiple", method="GET",data={})
+	respData = self.makeRequest("/users/Top10Scores/multiple", method="POST",data={})
 	self.assertDictEqual({'Code':testLib.RestTestCase.SUCCESS,'data':[{'user':'7', 'score':7},{'user':'6', 'score':6},{'user':'5', 'score':5},{'user':'4', 'score':4},{'user':'3', 'score':3}, {'user':'2', 'score':2}, {'user':'1', 'score':1}]},respData)
 
 
@@ -146,20 +158,20 @@ class TestAmbition(testLib.RestTestCase):
 	self.makeRequest("/users/SaveScores/multiple", method="POST", data={'user':'11', 'score':2})
 	self.makeRequest("/users/SaveScores/multiple", method="POST", data={'user':'12', 'score':1})
 
-	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'1', 'score':1})
-	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'2', 'score':2})
-	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'3', 'score':3})
-	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'4', 'score':4})
-	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'5', 'score':5})
-	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'6', 'score':6})
-	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'7', 'score':7})
-	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'8', 'score':8})
-	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'9', 'score':9})
-	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'10', 'score':10})
-	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'11', 'score':11})
-	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'12', 'score':12})
-	respData = self.makeRequest("/users/Top10Scores/single", method="GET",data={})
-	self.assertDictEqual({'Code':testLib.RestTestCase.SUCCESS,'data':[{'user':'12', 'score':12},{'user':'11', 'score':11},{'user':'10', 'score':10},{'user':'9', 'score':9},{'user':'8', 'score':8},{'user':'7', 'score':7},{'user':'6', 'score':6},{'user':'5', 'score':5},{'user':'4', 'score':4},{'user':'3', 'score':3}]},respData)
+	self.makeRequest("/users/SaveScores/single", method="POST", data={ 'score':1})
+	self.makeRequest("/users/SaveScores/single", method="POST", data={ 'score':2})
+	self.makeRequest("/users/SaveScores/single", method="POST", data={ 'score':3})
+	self.makeRequest("/users/SaveScores/single", method="POST", data={ 'score':4})
+	self.makeRequest("/users/SaveScores/single", method="POST", data={ 'score':5})
+	self.makeRequest("/users/SaveScores/single", method="POST", data={ 'score':6})
+	self.makeRequest("/users/SaveScores/single", method="POST", data={ 'score':7})
+	self.makeRequest("/users/SaveScores/single", method="POST", data={ 'score':8})
+	self.makeRequest("/users/SaveScores/single", method="POST", data={ 'score':9})
+	self.makeRequest("/users/SaveScores/single", method="POST", data={ 'score':10})
+	self.makeRequest("/users/SaveScores/single", method="POST", data={ 'score':11})
+	self.makeRequest("/users/SaveScores/single", method="POST", data={ 'score':12})
+	respData = self.makeRequest("/users/Top10Scores/single", method="POST",data={})
+	self.assertDictEqual({'Code':testLib.RestTestCase.SUCCESS,'data':[12,11,10,9,8,7,6,5,4,3]},respData)
 
 
 
@@ -176,37 +188,37 @@ class TestAmbition(testLib.RestTestCase):
 	self.makeRequest("/users/SaveScores/multiple", method="POST", data={'user':'10', 'score':10})
 	self.makeRequest("/users/SaveScores/multiple", method="POST", data={'user':'11', 'score':11})
 	self.makeRequest("/users/SaveScores/multiple", method="POST", data={'user':'12', 'score':12})
-	respData = self.makeRequest("/users/Top10Scores/multiple", method="GET",data={})
+	respData = self.makeRequest("/users/Top10Scores/multiple", method="POST",data={})
 	self.assertDictEqual({'Code':testLib.RestTestCase.SUCCESS,'data':[{'user':'12', 'score':12},{'user':'11', 'score':11},{'user':'10', 'score':10},{'user':'9', 'score':9},{'user':'8', 'score':8},{'user':'7', 'score':7},{'user':'6', 'score':6},{'user':'5', 'score':5},{'user':'4', 'score':4},{'user':'3', 'score':3}]},respData)
 
     #Make sure querying top 10 multiple players score doens't return or affected by the top 10 single score; 
     def testTop10CrossMultiple(self):
-	self.makeRequest("/users/SaveScores/multiple", method="POST", data={'user':'1', 'score':12})
-	self.makeRequest("/users/SaveScores/multiple", method="POST", data={'user':'2', 'score':11})
-	self.makeRequest("/users/SaveScores/multiple", method="POST", data={'user':'3', 'score':10})
-	self.makeRequest("/users/SaveScores/multiple", method="POST", data={'user':'4', 'score':9})
-	self.makeRequest("/users/SaveScores/multiple", method="POST", data={'user':'5', 'score':8})
-	self.makeRequest("/users/SaveScores/multiple", method="POST", data={'user':'6', 'score':7})
-	self.makeRequest("/users/SaveScores/multiple", method="POST", data={'user':'7', 'score':6})
-	self.makeRequest("/users/SaveScores/multiple", method="POST", data={'user':'8', 'score':5})
-	self.makeRequest("/users/SaveScores/multiple", method="POST", data={'user':'9', 'score':4})
-	self.makeRequest("/users/SaveScores/multiple", method="POST", data={'user':'10', 'score':3})
-	self.makeRequest("/users/SaveScores/multiple", method="POST", data={'user':'11', 'score':2})
-	self.makeRequest("/users/SaveScores/multiple", method="POST", data={'user':'12', 'score':1})
+	self.makeRequest("/users/SaveScores/multiple", method="POST", data={'user':'1','score':12})
+	self.makeRequest("/users/SaveScores/multiple", method="POST", data={'user':'2','score':11})
+	self.makeRequest("/users/SaveScores/multiple", method="POST", data={'user':'3','score':10})
+	self.makeRequest("/users/SaveScores/multiple", method="POST", data={'user':'4','score':9})
+	self.makeRequest("/users/SaveScores/multiple", method="POST", data={'user':'5','score':8})
+	self.makeRequest("/users/SaveScores/multiple", method="POST", data={'user':'6','score':7})
+	self.makeRequest("/users/SaveScores/multiple", method="POST", data={'user':'7','score':6})
+	self.makeRequest("/users/SaveScores/multiple", method="POST", data={'user':'8','score':5})
+	self.makeRequest("/users/SaveScores/multiple", method="POST", data={'user':'9','score':4})
+	self.makeRequest("/users/SaveScores/multiple", method="POST", data={'user':'10','score':3})
+	self.makeRequest("/users/SaveScores/multiple", method="POST", data={'user':'11','score':2})
+	self.makeRequest("/users/SaveScores/multiple", method="POST", data={'user':'12','score':1})
 
-	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'1', 'score':1})
-	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'2', 'score':2})
-	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'3', 'score':3})
-	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'4', 'score':4})
-	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'5', 'score':5})
-	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'6', 'score':6})
-	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'7', 'score':7})
-	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'8', 'score':8})
-	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'9', 'score':9})
-	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'10', 'score':10})
-	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'11', 'score':11})
-	self.makeRequest("/users/SaveScores/single", method="POST", data={'user':'12', 'score':12})
-	respData = self.makeRequest("/users/Top10Scores/multiple", method="GET",data={})
+	self.makeRequest("/users/SaveScores/single", method="POST", data={'score':1})
+	self.makeRequest("/users/SaveScores/single", method="POST", data={ 'score':2})
+	self.makeRequest("/users/SaveScores/single", method="POST", data={ 'score':3})
+	self.makeRequest("/users/SaveScores/single", method="POST", data={ 'score':4})
+	self.makeRequest("/users/SaveScores/single", method="POST", data={ 'score':5})
+	self.makeRequest("/users/SaveScores/single", method="POST", data={ 'score':6})
+	self.makeRequest("/users/SaveScores/single", method="POST", data={ 'score':7})
+	self.makeRequest("/users/SaveScores/single", method="POST", data={ 'score':8})
+	self.makeRequest("/users/SaveScores/single", method="POST", data={ 'score':9})
+	self.makeRequest("/users/SaveScores/single", method="POST", data={ 'score':10})
+	self.makeRequest("/users/SaveScores/single", method="POST", data={ 'score':11})
+	self.makeRequest("/users/SaveScores/single", method="POST", data={ 'score':12})
+	respData = self.makeRequest("/users/Top10Scores/multiple", method="POST",data={})
 	self.assertDictEqual({'Code':testLib.RestTestCase.SUCCESS,'data':[{'user':'1', 'score':12},{'user':'2', 'score':11},{'user':'3', 'score':10},{'user':'4', 'score':9},{'user':'5', 'score':8},{'user':'6', 'score':7},{'user':'7', 'score':6},{'user':'8', 'score':5},{'user':'9', 'score':4},{'user':'10', 'score':3}]},respData)
 
 
@@ -230,6 +242,28 @@ class TestAmbition(testLib.RestTestCase):
         self.makeRequest("/users/updateBalance", method="POST", data={'user':'1', 'balance':2})
 	respData = self.makeRequest("/items/post/buy", method="POST", data={'ItemName':'testPowerUp', 'user':'1'})
 	self.assertDictEqual({'Code':-5, 'data':{}}, respData)
+
+    #Test if an user can buy an item successfully if one has enough money
+    def testBuySuccess(self):
+	self.makeRequest("/items/post/update", method="POST", data={'ItemName':'testPowerUp', 'price':12})
+	self.makeRequest("/users/updateBalance", method="POST", data={'user':'1', 'balance':17})
+	respData = self.makeRequest("/items/post/buy", method="POST", data={'ItemName':'testPowerUp', 'user':'1'})
+	self.assertDictEqual({'Code':1, 'data':{}}, respData)
+
+    def testBuyAmountCorrect(self):
+	self.makeRequest("/items/post/update", method="POST", data={'ItemName':'testPowerUp', 'price':12})
+	self.makeRequest("/users/updateBalance", method="POST", data={'user':'1', 'balance':40})
+	print ("test 1")
+	respData = self.makeRequest("/items/post/buy", method="POST", data={'ItemName':'testPowerUp', 'user':'1'})
+	print ("test 2")
+	respData = self.makeRequest("/items/post/buy", method="POST", data={'ItemName':'testPowerUp', 'user':'1'})
+	print ("test 3")
+	respData = self.makeRequest("/items/post/get", method="POST", data={'user':'1'})
+	self.assertDictEqual(respData, {'Code':1,'data':[{'name':'testPowerUp', 'amount':2}]})
+
+
+
+
 	
 
 

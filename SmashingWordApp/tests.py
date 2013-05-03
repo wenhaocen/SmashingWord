@@ -1,6 +1,6 @@
 import os
 import sys
-sys.path.append('/home/ubuntu/169proj/SmashingWord')
+sys.path.append('/home/ubuntu/cs169/SmashingWord')
 os.environ['DJANGO_SETTINGS_MODULE'] = "SmashingWord.settings"
 """
 This file demonstrates writing tests using the unittest module. These will pass

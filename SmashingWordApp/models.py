@@ -71,14 +71,11 @@ class User(models.Model):
 			code = SUCCESS
 		except Exception as e:
 			print e
-			print "faile"
 			code=FAILURE
 		return (code, {})
 	
 	def add(self,inUserName, Balance=0, MpScore=0, SpScore=0):
 		code=1
-		print ("diu la ma !!!!")
-		print SpScore
 		if self.userExist(inUserName)[0]:
 			code=ERR_USER_EXISTS
 		if not self.validateUsername(inUserName):
@@ -101,7 +98,6 @@ class User(models.Model):
 
 	def Top10Single(self):
 		try:
-			print "query top10"
 			dbResult = User.objects.order_by("-spScore")[0:10]
 			print(type(dbResult))
 			return (SUCCESS, self.parseHandler(dbResult,'easy', True))
@@ -264,6 +260,21 @@ class OwnItem(models.Model):
 	userA = models.TextField(max_length=128, blank=False)
 	Itemname = models.TextField(max_length=128)
 	amount = models.IntegerField()
+	def viewItemsforUser(self, UserName):
+		try:
+			resultList=[]
+			dbResult = OwnItem.objects.get(userA = UserName)
+			if type(dbResult)==django.db.models.query.QuerySet:
+				for elem in dbResult:
+					resultList.append({'name': elem.Itemname, 'amount': elem.amount})
+			else:
+				resultList.append({'name':dbResult.Itemname, 'amount': dbResult.amount})
+			return (SUCCESS, resultList)
+			
+			
+		except Exception as e:
+			print (e)
+			return (FAILURE,{})
 	
 	def reset(self):
 		OwnItem.objects.all().delete()
@@ -284,16 +295,17 @@ class OwnItem(models.Model):
 
 
 	def addPair(self,user, ItemName):
+		print ("Add pair")
 		try:
 			temp = self.testExist(user,ItemName)
 			if (temp[0]):
-				dbresult = temp[1]
-				dbresult.amount +=1
-				dbresult.save()
+				temp[1].amount +=1
+				temp[1].save()
+				return (SUCCESS,{})
 			else:
 				exist = 0
 				try:
-					User.objects.get(userA = user)
+					User.objects.get(userName = user)
 					exist =1
 				except Exception as e:
 					exist = 0
@@ -334,12 +346,15 @@ def sortHelper(inputNum):
 
 class SingleTopTen(models.Model):
 	score = models.IntegerField()
+	def __unicode__(self):
+		return str((self.score))
+
 	def saveScoressSingle(self,score):
 		try:
 			minScore = None
 			listofTops  = SingleTopTen.objects.all()
 			if len(listofTops)<10:
-				temp = SingleTopTen(score)
+				temp = SingleTopTen(score=score)
 				temp.save()
 			else:
 				for elem in listofTops:
@@ -363,22 +378,16 @@ class SingleTopTen(models.Model):
 		SingleTopTen.objects.all().delete()
 		return (SUCCESS,{})
 	def insertObjects(self):
-		print (3333)
 		self.reset()
-		print (7777)
 		try:
 			temp  = SingleTopTen(score=100)
-			print(1111)
 			temp.save()
-			print(2222)
 			temp  = SingleTopTen(score =64)
 			temp.save()
-			print("!!!!!")
 			temp  = SingleTopTen(score =42)
 			temp.save()
 			temp  = SingleTopTen(score=41)
 			temp.save()
-			print("@@@@@@@@@")
 			temp  = SingleTopTen(score=23)
 			temp.save()
 			temp  = SingleTopTen(score=0)
@@ -389,13 +398,10 @@ class SingleTopTen(models.Model):
 			temp.save()
 			temp  = SingleTopTen(score=10)
 			temp.save()
-			print("$$$$$$$$")
 			temp  = SingleTopTen(score=8)
 			temp.save()
-			print ("~")
 			return (SUCCESS, {})
 		except Exception as e:
-			print ("exception!")
 			print (e)
 			return (FAILURE, {})
 

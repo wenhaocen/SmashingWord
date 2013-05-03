@@ -76,6 +76,10 @@ def index(request):
 			result2 = g_user.insertObjects()
 			result3 = g_singleScore.insertObjects()
 			result4 = g_OwnItem.insertObjects()
+			print (result1)
+			print (result2)
+			print (result3)
+			print (result4)
 			if (result1[0]==1 and result2[0]==1 and result3[0]==1 and result4[0]==1):
 				return HttpResponse(json.dumps({'Code': 1, 'data':{}}),content_type="application/json" )
 			else:	
@@ -117,24 +121,36 @@ def ItemPostController(request):
 	if 'price' in inData:
 		price = inData['price']
 	if request.path == "/items/post/buy":
+		print (1111)
 		dbUser = g_user.getUserInfo(user)[1]
+		print (2222)
 		dbItem = g_item.getItemInfo(ItemName)[1]
+		print (3333)
 		if (dbUser=={} or dbItem=={}):
+			print (4444)
 			return HttpResponse(json.dumps({'Code': FAILURE, 'data':{}}),content_type="application/json" )
 		else:
+			print (5555)
+			print (dbItem)
+			print(dbUser)
 			itemPrice = dbItem['price']
 			userBalance = dbUser['balance']
 			if (userBalance - itemPrice>=0):
+				print (6666)
 				finalBalance = userBalance - itemPrice
+				print (7777)
 				g_user.updateBalance(user, finalBalance)
+				print (8888)
 				result = g_OwnItem.addPair(user, ItemName)
+				print (9999)
 			else:
-				print "1234!!!!"
 				return HttpResponse(json.dumps({'Code': FAILURE, 'data':{}}),content_type="application/json" )
 	elif request.path  == "/items/post/use":
 		result = g_OwnItem.deletePair(user,ItemName)
 	elif request.path == "/items/post/update":
 		result = g_item.updateItem(ItemName,price)
+	elif request.path == "/items/post/get":
+		result = g_OwnItem.viewItemsforUser(user)
 	else:
 		raise Http404
 	return HttpResponse(json.dumps({'Code': result[0], 'data':result[1]}),content_type="application/json" )
@@ -145,6 +161,10 @@ def ItemPostController(request):
 def TESTController(request):
 	if request.path=="/TESTAPI/resetFixture":
 		g_user.TESTAPI_resetFixture()
+		g_user.reset()
+		g_item.reset()
+		g_OwnItem.reset()
+		g_singleScore.reset()
 		return HttpResponse(json.dumps({'Code': SUCCESS}),content_type="application/json" )
 	elif request.path== "/TESTAPI/unitTests":
 		buf = StringIO.StringIO()
